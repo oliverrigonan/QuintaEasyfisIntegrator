@@ -88,7 +88,8 @@ namespace EasyfisIntegrator
             try
             {
                 DateTime dateTimeNow = DateTime.Now;
-                String yesterdayDate = dateTimeNow.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                String yesterdayDate = dateTimeNow.AddDays(-90).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                Console.WriteLine(yesterdayDate);
                 String todayDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(txtAPIURLHost.Text + "/api/backoffice/transjournal?hcd=QDB&tkn=WOREINSLKJNFQOEASDJKAB&pos=false&frm=" + yesterdayDate + "&tdt=" + todayDate);
@@ -108,76 +109,74 @@ namespace EasyfisIntegrator
                         List<JEN> newListJEN = new List<JEN>();
                         foreach (var JEN in TRN.JEN)
                         {
-                            newListJEN = new List<JEN>
+                            JEN newJEN = new JEN()
                             {
-                                new JEN()
-                                {
-                                        FTN = JEN.FTN,
-                                        SAR = JEN.SAR,
-                                        FID = JEN.FID,
-                                        SUF = JEN.SUF,
-                                        ACC = JEN.ACC,
-                                        ACS = JEN.ACS,
-                                        SAC = JEN.SAC,
-                                        ADC = JEN.ADC,
-                                        TDT = JEN.TDT,
-                                        GLC = JEN.GLC,
-                                        DBT = JEN.DBT,
-                                        CRD = JEN.CRD,
-                                        BNK = JEN.BNK,
-                                        BNM = JEN.BNM,
-                                        BOA = JEN.BOA,
-                                        CTI = JEN.CTI,
-                                        CNO = JEN.CNO,
-                                        VNO = JEN.VNO,
-                                        VDT = JEN.VDT,
-                                        CHQ = JEN.CHQ
-                                }
+                                FTN = JEN.FTN,
+                                SAR = JEN.SAR,
+                                FID = JEN.FID,
+                                SUF = JEN.SUF,
+                                ACC = JEN.ACC,
+                                ACS = JEN.ACS,
+                                SAC = JEN.SAC,
+                                ADC = JEN.ADC,
+                                TDT = JEN.TDT,
+                                GLC = JEN.GLC,
+                                DBT = JEN.DBT,
+                                CRD = JEN.CRD,
+                                BNK = JEN.BNK,
+                                BNM = JEN.BNM,
+                                BOA = JEN.BOA,
+                                CTI = JEN.CTI,
+                                CNO = JEN.CNO,
+                                VNO = JEN.VNO,
+                                VDT = JEN.VDT,
+                                CHQ = JEN.CHQ
                             };
+
+                            newListJEN.Add(newJEN);
                         }
 
-                        newListTRN = new List<TRN>
+                        TRN newTRN = new TRN()
                         {
-                            new TRN()
-                            {
-                                FTN = TRN.FTN,
-                                PTN = TRN.PTN,
-                                FID = TRN.FID,
-                                STS = TRN.STS,
-                                ADT = TRN.ADT,
-                                DDT = TRN.DDT,
-                                TDT = TRN.TDT,
-                                TCI = TRN.TCI,
-                                SAR = TRN.SAR,
-                                TCC = TRN.TCC,
-                                SAI = TRN.SAI,
-                                ACI = TRN.ACI,
-                                RNO = TRN.RNO,
-                                ACS = TRN.ACS,
-                                CUR = TRN.CUR,
-                                DSC = TRN.DSC,
-                                DSA = TRN.DSA,
-                                BAM = TRN.BAM,
-                                GAM = TRN.GAM,
-                                NBA = TRN.NBA,
-                                NAM = TRN.NAM,
-                                BNK = TRN.BNK,
-                                BNM = TRN.BNM,
-                                BOA = TRN.BOA,
-                                CTI = TRN.CTI,
-                                CNO = TRN.CNO,
-                                VNO = TRN.VNO,
-                                VDT = TRN.VDT,
-                                CHQ = TRN.CHQ,
-                                RMK = TRN.RMK,
-                                RMO = TRN.RMO,
-                                CNT = TRN.CNT,
-                                WHT = TRN.WHT,
-                                MRK = TRN.MRK,
-                                SRC = TRN.SRC,
-                                JEN = TRN.JEN,
-                            }
+                            FTN = TRN.FTN,
+                            PTN = TRN.PTN,
+                            FID = TRN.FID,
+                            STS = TRN.STS,
+                            ADT = TRN.ADT,
+                            DDT = TRN.DDT,
+                            TDT = TRN.TDT,
+                            TCI = TRN.TCI,
+                            SAR = TRN.SAR,
+                            TCC = TRN.TCC,
+                            SAI = TRN.SAI,
+                            ACI = TRN.ACI,
+                            RNO = TRN.RNO,
+                            ACS = TRN.ACS,
+                            CUR = TRN.CUR,
+                            DSC = TRN.DSC,
+                            DSA = TRN.DSA,
+                            BAM = TRN.BAM,
+                            GAM = TRN.GAM,
+                            NBA = TRN.NBA,
+                            NAM = TRN.NAM,
+                            BNK = TRN.BNK,
+                            BNM = TRN.BNM,
+                            BOA = TRN.BOA,
+                            CTI = TRN.CTI,
+                            CNO = TRN.CNO,
+                            VNO = TRN.VNO,
+                            VDT = TRN.VDT,
+                            CHQ = TRN.CHQ,
+                            RMK = TRN.RMK,
+                            RMO = TRN.RMO,
+                            CNT = TRN.CNT,
+                            WHT = TRN.WHT,
+                            MRK = TRN.MRK,
+                            SRC = TRN.SRC,
+                            JEN = TRN.JEN,
                         };
+
+                        newListTRN.Add(newTRN);
                     }
 
                     CON newCON = new CON()
