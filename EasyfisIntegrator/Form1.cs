@@ -31,12 +31,15 @@ namespace EasyfisIntegrator
 
             txtTime.Text = "00:00:00 AM";
             txtTimeTrigger.Text = "02:00:00 AM";
+            txtAPIURLHost.Text = "http://api.kloudhotels.com:8081";
+            txtJSONDownloadPath.Text = "D:\\Innosoft\\fileWatcherPath";
+            txtJSONArchivePath.Text = "D:\\Innosoft\\fileWatcherPath\\archive";
 
             timer.Interval = 1000;
             timer.Tick += new EventHandler(TimerTick);
             timer.Enabled = true;
 
-            fileWatcher.Path = "D:\\Innosoft\\fileWatcherPath";
+            fileWatcher.Path = txtJSONDownloadPath.Text;
             fileWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
             fileWatcher.Filter = "*.json";
 
@@ -51,7 +54,7 @@ namespace EasyfisIntegrator
         // =========================================================
         // File Watcher: On File Changed (Changed, Created, Deleted)
         // =========================================================
-        public static void FileWatcherOnChanged(object source, FileSystemEventArgs e)
+        public void FileWatcherOnChanged(object source, FileSystemEventArgs e)
         {
             Console.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
         }
@@ -59,7 +62,7 @@ namespace EasyfisIntegrator
         // =============================
         // File Watcher: On File Renamed
         // =============================
-        public static void FileWatcherOnRenamed(object source, RenamedEventArgs e)
+        public void FileWatcherOnRenamed(object source, RenamedEventArgs e)
         {
             Console.WriteLine("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
         }
@@ -72,22 +75,23 @@ namespace EasyfisIntegrator
             txtTime.Text = DateTime.Now.ToString("hh:mm:ss tt", CultureInfo.InvariantCulture);
             if (txtTime.Text.Equals(txtTimeTrigger.Text))
             {
-                Console.WriteLine("Execute");
+                timer.Enabled = false;
+                GetData();
             }
         }
 
         // =================
         // Get Data From API
         // =================
-        private static void GetData()
+        public void GetData()
         {
             try
             {
                 DateTime dateTimeNow = DateTime.Now;
-                String fromDate = dateTimeNow.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-                String toDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                String yesterdayDate = dateTimeNow.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                String todayDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://api.kloudhotels.com:8081/api/backoffice/transjournal?hcd=QDB&tkn=WOREINSLKJNFQOEASDJKAB&pos=false&frm=" + fromDate + "&tdt=" + toDate);
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(txtAPIURLHost.Text + "/api/backoffice/transjournal?hcd=QDB&tkn=WOREINSLKJNFQOEASDJKAB&pos=false&frm=" + yesterdayDate + "&tdt=" + todayDate);
                 httpWebRequest.Method = "GET";
                 httpWebRequest.Accept = "application/json";
 
@@ -96,9 +100,108 @@ namespace EasyfisIntegrator
                 {
                     var result = streamReader.ReadToEnd();
                     JavaScriptSerializer js = new JavaScriptSerializer();
-                    List<RootObject> rootObject = (List<RootObject>)js.Deserialize(result, typeof(List<RootObject>));
+                    RootObject rootObject = (RootObject)js.Deserialize(result, typeof(RootObject));
 
-                    // TODO LIST: API Ojbects
+                    List<TRN> newListTRN = new List<TRN>();
+                    foreach (var TRN in rootObject.TRN)
+                    {
+                        List<JEN> newListJEN = new List<JEN>();
+                        foreach (var JEN in TRN.JEN)
+                        {
+                            newListJEN = new List<JEN>
+                            {
+                                new JEN()
+                                {
+                                        FTN = JEN.FTN,
+                                        SAR = JEN.SAR,
+                                        FID = JEN.FID,
+                                        SUF = JEN.SUF,
+                                        ACC = JEN.ACC,
+                                        ACS = JEN.ACS,
+                                        SAC = JEN.SAC,
+                                        ADC = JEN.ADC,
+                                        TDT = JEN.TDT,
+                                        GLC = JEN.GLC,
+                                        DBT = JEN.DBT,
+                                        CRD = JEN.CRD,
+                                        BNK = JEN.BNK,
+                                        BNM = JEN.BNM,
+                                        BOA = JEN.BOA,
+                                        CTI = JEN.CTI,
+                                        CNO = JEN.CNO,
+                                        VNO = JEN.VNO,
+                                        VDT = JEN.VDT,
+                                        CHQ = JEN.CHQ
+                                }
+                            };
+                        }
+
+                        newListTRN = new List<TRN>
+                        {
+                            new TRN()
+                            {
+                                FTN = TRN.FTN,
+                                PTN = TRN.PTN,
+                                FID = TRN.FID,
+                                STS = TRN.STS,
+                                ADT = TRN.ADT,
+                                DDT = TRN.DDT,
+                                TDT = TRN.TDT,
+                                TCI = TRN.TCI,
+                                SAR = TRN.SAR,
+                                TCC = TRN.TCC,
+                                SAI = TRN.SAI,
+                                ACI = TRN.ACI,
+                                RNO = TRN.RNO,
+                                ACS = TRN.ACS,
+                                CUR = TRN.CUR,
+                                DSC = TRN.DSC,
+                                DSA = TRN.DSA,
+                                BAM = TRN.BAM,
+                                GAM = TRN.GAM,
+                                NBA = TRN.NBA,
+                                NAM = TRN.NAM,
+                                BNK = TRN.BNK,
+                                BNM = TRN.BNM,
+                                BOA = TRN.BOA,
+                                CTI = TRN.CTI,
+                                CNO = TRN.CNO,
+                                VNO = TRN.VNO,
+                                VDT = TRN.VDT,
+                                CHQ = TRN.CHQ,
+                                RMK = TRN.RMK,
+                                RMO = TRN.RMO,
+                                CNT = TRN.CNT,
+                                WHT = TRN.WHT,
+                                MRK = TRN.MRK,
+                                SRC = TRN.SRC,
+                                JEN = TRN.JEN,
+                            }
+                        };
+                    }
+
+                    CON newCON = new CON()
+                    {
+                        DPI = rootObject.CON.DPI,
+                        DCI = rootObject.CON.DCI,
+                    };
+
+                    RootObject rootObjectData = new RootObject()
+                    {
+                        CON = newCON,
+                        TRN = newListTRN
+                    };
+
+                    String jsonDownloadPath = txtJSONDownloadPath.Text;
+                    String fileName = "Sample";
+
+                    String json = new JavaScriptSerializer().Serialize(rootObjectData);
+                    String jsonFileName = jsonDownloadPath + "\\" + fileName + ".json";
+
+                    File.WriteAllText(jsonFileName, json);
+
+                    txtActivity.Text += "JSON Successfuly Downloaded! \r\n";
+                    timer.Enabled = true;
                 }
             }
             catch (Exception e)

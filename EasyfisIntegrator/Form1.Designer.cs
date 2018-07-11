@@ -39,8 +39,12 @@
             this.txtActivity = new System.Windows.Forms.TextBox();
             this.lblActivity = new System.Windows.Forms.Label();
             this.btnStart = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtAPIURLHost = new System.Windows.Forms.TextBox();
             this.lblAPIUrlHost = new System.Windows.Forms.Label();
+            this.txtJSONDownloadPath = new System.Windows.Forms.TextBox();
+            this.lblJSONDownloadPath = new System.Windows.Forms.Label();
+            this.txtJSONArchivePath = new System.Windows.Forms.TextBox();
+            this.lblJSONArchivePath = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -87,6 +91,7 @@
             // 
             // txtTime
             // 
+            this.txtTime.Enabled = false;
             this.txtTime.Location = new System.Drawing.Point(15, 98);
             this.txtTime.Name = "txtTime";
             this.txtTime.Size = new System.Drawing.Size(350, 22);
@@ -110,16 +115,17 @@
             // 
             // txtActivity
             // 
-            this.txtActivity.Location = new System.Drawing.Point(15, 206);
+            this.txtActivity.Enabled = false;
+            this.txtActivity.Location = new System.Drawing.Point(14, 265);
             this.txtActivity.Multiline = true;
             this.txtActivity.Name = "txtActivity";
-            this.txtActivity.Size = new System.Drawing.Size(773, 232);
+            this.txtActivity.Size = new System.Drawing.Size(773, 173);
             this.txtActivity.TabIndex = 6;
             // 
             // lblActivity
             // 
             this.lblActivity.AutoSize = true;
-            this.lblActivity.Location = new System.Drawing.Point(12, 186);
+            this.lblActivity.Location = new System.Drawing.Point(14, 245);
             this.lblActivity.Name = "lblActivity";
             this.lblActivity.Size = new System.Drawing.Size(56, 17);
             this.lblActivity.TabIndex = 5;
@@ -134,21 +140,53 @@
             this.btnStart.Text = "Start";
             this.btnStart.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // txtAPIURLHost
             // 
-            this.textBox1.Location = new System.Drawing.Point(14, 152);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(774, 22);
-            this.textBox1.TabIndex = 10;
+            this.txtAPIURLHost.Location = new System.Drawing.Point(14, 155);
+            this.txtAPIURLHost.Name = "txtAPIURLHost";
+            this.txtAPIURLHost.Size = new System.Drawing.Size(773, 22);
+            this.txtAPIURLHost.TabIndex = 10;
             // 
             // lblAPIUrlHost
             // 
             this.lblAPIUrlHost.AutoSize = true;
-            this.lblAPIUrlHost.Location = new System.Drawing.Point(14, 132);
+            this.lblAPIUrlHost.Location = new System.Drawing.Point(14, 135);
             this.lblAPIUrlHost.Name = "lblAPIUrlHost";
             this.lblAPIUrlHost.Size = new System.Drawing.Size(98, 17);
             this.lblAPIUrlHost.TabIndex = 9;
             this.lblAPIUrlHost.Text = "API URL Host:";
+            // 
+            // txtJSONDownloadPath
+            // 
+            this.txtJSONDownloadPath.Location = new System.Drawing.Point(14, 210);
+            this.txtJSONDownloadPath.Name = "txtJSONDownloadPath";
+            this.txtJSONDownloadPath.Size = new System.Drawing.Size(376, 22);
+            this.txtJSONDownloadPath.TabIndex = 12;
+            // 
+            // lblJSONDownloadPath
+            // 
+            this.lblJSONDownloadPath.AutoSize = true;
+            this.lblJSONDownloadPath.Location = new System.Drawing.Point(14, 190);
+            this.lblJSONDownloadPath.Name = "lblJSONDownloadPath";
+            this.lblJSONDownloadPath.Size = new System.Drawing.Size(144, 17);
+            this.lblJSONDownloadPath.TabIndex = 11;
+            this.lblJSONDownloadPath.Text = "JSON Download Path";
+            // 
+            // txtJSONArchivePath
+            // 
+            this.txtJSONArchivePath.Location = new System.Drawing.Point(396, 210);
+            this.txtJSONArchivePath.Name = "txtJSONArchivePath";
+            this.txtJSONArchivePath.Size = new System.Drawing.Size(391, 22);
+            this.txtJSONArchivePath.TabIndex = 14;
+            // 
+            // lblJSONArchivePath
+            // 
+            this.lblJSONArchivePath.AutoSize = true;
+            this.lblJSONArchivePath.Location = new System.Drawing.Point(393, 190);
+            this.lblJSONArchivePath.Name = "lblJSONArchivePath";
+            this.lblJSONArchivePath.Size = new System.Drawing.Size(129, 17);
+            this.lblJSONArchivePath.TabIndex = 13;
+            this.lblJSONArchivePath.Text = "JSON Archive Path";
             // 
             // FormMain
             // 
@@ -156,7 +194,11 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtJSONArchivePath);
+            this.Controls.Add(this.lblJSONArchivePath);
+            this.Controls.Add(this.txtJSONDownloadPath);
+            this.Controls.Add(this.lblJSONDownloadPath);
+            this.Controls.Add(this.txtAPIURLHost);
             this.Controls.Add(this.lblAPIUrlHost);
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.txtActivity);
@@ -191,8 +233,12 @@
         private System.Windows.Forms.TextBox txtActivity;
         private System.Windows.Forms.Label lblActivity;
         private System.Windows.Forms.Button btnStart;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtAPIURLHost;
         private System.Windows.Forms.Label lblAPIUrlHost;
+        private System.Windows.Forms.TextBox txtJSONDownloadPath;
+        private System.Windows.Forms.Label lblJSONDownloadPath;
+        private System.Windows.Forms.TextBox txtJSONArchivePath;
+        private System.Windows.Forms.Label lblJSONArchivePath;
     }
 }
 
