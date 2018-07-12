@@ -76,20 +76,19 @@ namespace EasyfisIntegrator
             if (txtTime.Text.Equals(txtTimeTrigger.Text))
             {
                 timer.Enabled = false;
-                GetData();
+                SyncSalesData();
             }
         }
 
-        // =================
-        // Get Data From API
-        // =================
-        public void GetData()
+        // ===============
+        // Sync Sales Data
+        // ===============
+        public void SyncSalesData()
         {
             try
             {
                 DateTime dateTimeNow = DateTime.Now;
                 String yesterdayDate = dateTimeNow.AddDays(-90).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-                Console.WriteLine(yesterdayDate);
                 String todayDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(txtAPIURLHost.Text + "/api/backoffice/transjournal?hcd=QDB&tkn=WOREINSLKJNFQOEASDJKAB&pos=false&frm=" + yesterdayDate + "&tdt=" + todayDate);
@@ -218,6 +217,7 @@ namespace EasyfisIntegrator
         public string DPI { get; set; }
         public string DCI { get; set; }
     }
+
     // ===========
     // Models Root
     // ===========
