@@ -31,7 +31,8 @@ namespace EasyfisIntegrator
 
             txtTime.Text = "00:00:00 AM";
             txtTimeTrigger.Text = "02:00:00 AM";
-            txtAPIURLHost.Text = "http://api.kloudhotels.com:8081";
+            txtAPIURLHostSource.Text = "http://api.kloudhotels.com:8081";
+            txtAPIURLHostEasyfis.Text = "http://localhost:2651";
             txtJSONDownloadPath.Text = "D:\\Innosoft\\fileWatcherPath";
             txtJSONArchivePath.Text = "D:\\Innosoft\\fileWatcherPath\\archive";
 
@@ -88,10 +89,10 @@ namespace EasyfisIntegrator
             try
             {
                 DateTime dateTimeNow = DateTime.Now;
-                String yesterdayDate = dateTimeNow.AddDays(-90).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                String yesterdayDate = dateTimeNow.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
                 String todayDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(txtAPIURLHost.Text + "/api/backoffice/transjournal?hcd=QDB&tkn=WOREINSLKJNFQOEASDJKAB&pos=false&frm=" + yesterdayDate + "&tdt=" + todayDate);
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(txtAPIURLHostSource.Text + "/api/backoffice/transjournal?hcd=QDB&tkn=WOREINSLKJNFQOEASDJKAB&pos=false&frm=" + yesterdayDate + "&tdt=" + todayDate);
                 httpWebRequest.Method = "GET";
                 httpWebRequest.Accept = "application/json";
 
@@ -191,20 +192,92 @@ namespace EasyfisIntegrator
                     };
 
                     String jsonDownloadPath = txtJSONDownloadPath.Text;
-                    String fileName = "Sample";
+                    String fileName = "Transaction (" + todayDate + ")";
 
                     String json = new JavaScriptSerializer().Serialize(rootObjectData);
                     String jsonFileName = jsonDownloadPath + "\\" + fileName + ".json";
 
                     File.WriteAllText(jsonFileName, json);
 
-                    txtActivity.Text += "JSON Successfuly Downloaded! \r\n";
-                    timer.Enabled = true;
+                    txtActivity.Text += fileName + " JSON File Successfuly Created! \r\n";
+                    SendSalesJsonFiles();
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+            }
+        }
+
+        // =======================
+        // Send Json Files (Sales)
+        // =======================
+        public void SendSalesJsonFiles()
+        {
+            try
+            {
+                String apiUrlHost = txtAPIURLHostEasyfis.Text;
+                String jsonDownloadPath = txtJSONDownloadPath.Text;
+                List<String> files = new List<String>(Directory.EnumerateFiles(jsonDownloadPath));
+
+                if (files.Any())
+                {
+                    var file = files.FirstOrDefault();
+
+                    String json;
+                    using (StreamReader r = new StreamReader(file))
+                    {
+                        json = r.ReadToEnd();
+                    }
+
+                    var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://" + apiUrlHost + "/api/add/POSIntegration/salesInvoice");
+                    httpWebRequest.ContentType = "application/json";
+                    httpWebRequest.Method = "POST";
+
+                    using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                    {
+                        var json_serializer = new JavaScriptSerializer();
+                        RootObject r = json_serializer.Deserialize<RootObject>(json);
+
+                        Console.WriteLine("Sending...");
+                        streamWriter.Write(new JavaScriptSerializer().Serialize(r));
+                    }
+
+                    var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                    {
+                        var result = streamReader.ReadToEnd();
+                        if (result != null)
+                        {
+                            var json_serializer = new JavaScriptSerializer();
+                            RootObject r = json_serializer.Deserialize<RootObject>(json);
+
+                            Console.WriteLine("Sent Succesful!");
+                        }
+                    }
+                }
+
+                timer.Enabled = true;
+            }
+            catch (WebException we)
+            {
+                var resp = new StreamReader(we.Response.GetResponseStream()).ReadToEnd();
+
+                String jsonDownloadPath = txtJSONDownloadPath.Text;
+                List<String> files = new List<String>(Directory.EnumerateFiles(jsonDownloadPath));
+                if (files.Any())
+                {
+                    var file = files.FirstOrDefault();
+
+                    String json;
+                    using (StreamReader r = new StreamReader(file))
+                    {
+                        json = r.ReadToEnd();
+                    }
+
+                    Console.WriteLine(resp.Replace("\"", ""));
+                    Console.WriteLine();
+                }
             }
         }
     }
