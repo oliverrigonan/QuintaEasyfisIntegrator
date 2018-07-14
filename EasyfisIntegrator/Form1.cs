@@ -16,7 +16,7 @@ namespace EasyfisIntegrator
 {
     public partial class FormMain : Form
     {
-        // ===============
+        // ================
         // Global Variables
         // ================
         private static FileSystemWatcher fileWatcher = new FileSystemWatcher();
@@ -27,6 +27,9 @@ namespace EasyfisIntegrator
         // =========
         public FormMain()
         {
+            // ===============
+            // Form Components
+            // ===============
             InitializeComponent();
 
             txtTime.Text = "00:00:00 AM";
@@ -40,6 +43,9 @@ namespace EasyfisIntegrator
             timer.Tick += new EventHandler(TimerTick);
             timer.Enabled = true;
 
+            // ============
+            // File Watcher
+            // ============
             fileWatcher.Path = txtJSONDownloadPath.Text;
             fileWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
             fileWatcher.Filter = "*.json";
@@ -88,20 +94,29 @@ namespace EasyfisIntegrator
         {
             try
             {
+                // ===========
+                // URL Filters
+                // ===========
                 DateTime dateTimeNow = DateTime.Now;
                 String yesterdayDate = dateTimeNow.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
                 String todayDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(txtAPIURLHostSource.Text + "/api/backoffice/transjournal?hcd=QDB&tkn=WOREINSLKJNFQOEASDJKAB&pos=false&frm=" + yesterdayDate + "&tdt=" + todayDate);
+                // ====================
+                // Process Http Request
+                // ====================
+                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(txtAPIURLHostSource.Text + "/api/backoffice/transjournal?hcd=QDB&tkn=WOREINSLKJNFQOEASDJKAB&pos=false&frm=" + yesterdayDate + "&tdt=" + todayDate);
                 httpWebRequest.Method = "GET";
                 httpWebRequest.Accept = "application/json";
 
-                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                // =====================
+                // Process Http Response
+                // =====================
+                HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream()))
                 {
                     var result = streamReader.ReadToEnd();
-                    JavaScriptSerializer js = new JavaScriptSerializer();
-                    RootObject rootObject = (RootObject)js.Deserialize(result, typeof(RootObject));
+                    JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+                    RootObject rootObject = (RootObject)javaScriptSerializer.Deserialize(result, typeof(RootObject));
 
                     List<TRN> newListTRN = new List<TRN>();
                     foreach (var TRN in rootObject.TRN)
@@ -115,7 +130,7 @@ namespace EasyfisIntegrator
                                 SAR = JEN.SAR,
                                 FID = JEN.FID,
                                 SUF = JEN.SUF,
-                                ACC = JEN.ACC,
+                                ACI = JEN.ACI,
                                 ACS = JEN.ACS,
                                 SAC = JEN.SAC,
                                 ADC = JEN.ADC,
@@ -146,10 +161,13 @@ namespace EasyfisIntegrator
                             DDT = TRN.DDT,
                             TDT = TRN.TDT,
                             TCI = TRN.TCI,
-                            SAR = TRN.SAR,
                             TCC = TRN.TCC,
-                            SAI = TRN.SAI,
-                            ACI = TRN.ACI,
+                            MEM = TRN.MEM,
+                            SAR = TRN.SAR,
+                            SAI = TRN.SAI, // Item Code
+                            SAM = TRN.SAM, // Item Description
+                            ACI = TRN.ACI, // Customer Code
+                            ACC = TRN.ACC, // Customer Name
                             RNO = TRN.RNO,
                             ACS = TRN.ACS,
                             CUR = TRN.CUR,
@@ -173,7 +191,7 @@ namespace EasyfisIntegrator
                             WHT = TRN.WHT,
                             MRK = TRN.MRK,
                             SRC = TRN.SRC,
-                            JEN = TRN.JEN,
+                            JEN = TRN.JEN
                         };
 
                         newListTRN.Add(newTRN);
@@ -199,13 +217,13 @@ namespace EasyfisIntegrator
 
                     File.WriteAllText(jsonFileName, json);
 
-                    txtActivity.Text += fileName + " JSON File Successfuly Created! \r\n";
+                    txtActivity.Text += fileName + " JSON File Successfuly Created! \r\n\n";
                     SendSalesJsonFiles();
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                txtActivity.Text += e.Message + "\r\n\n";
             }
         }
 
@@ -216,43 +234,53 @@ namespace EasyfisIntegrator
         {
             try
             {
+                // ==========
+                // Read Files
+                // ==========
                 String apiUrlHost = txtAPIURLHostEasyfis.Text;
                 String jsonDownloadPath = txtJSONDownloadPath.Text;
-                List<String> files = new List<String>(Directory.EnumerateFiles(jsonDownloadPath));
 
+                List<String> files = new List<String>(Directory.EnumerateFiles(jsonDownloadPath));
                 if (files.Any())
                 {
                     var file = files.FirstOrDefault();
 
                     String json;
-                    using (StreamReader r = new StreamReader(file))
+                    using (StreamReader streamReader = new StreamReader(file))
                     {
-                        json = r.ReadToEnd();
+                        json = streamReader.ReadToEnd();
                     }
 
-                    var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://" + apiUrlHost + "/api/add/POSIntegration/salesInvoice");
+                    // ====================
+                    // Process Http Request
+                    // ====================
+                    HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create("http://" + apiUrlHost + "/api/add/POSIntegration/salesInvoice");
                     httpWebRequest.ContentType = "application/json";
                     httpWebRequest.Method = "POST";
 
-                    using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                    // =================
+                    // Process Http Data
+                    // =================
+                    using (StreamWriter streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
                     {
-                        var json_serializer = new JavaScriptSerializer();
-                        RootObject r = json_serializer.Deserialize<RootObject>(json);
+                        JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+                        RootObject rootObject = javaScriptSerializer.Deserialize<RootObject>(json);
 
-                        Console.WriteLine("Sending...");
-                        streamWriter.Write(new JavaScriptSerializer().Serialize(r));
+                        streamWriter.Write(new JavaScriptSerializer().Serialize(rootObject));
+
+                        txtActivity.Text += "Sending \r\n\n";
                     }
 
-                    var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-                    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                    // =====================
+                    // Process Http Response
+                    // =====================
+                    HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                    using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream()))
                     {
                         var result = streamReader.ReadToEnd();
                         if (result != null)
                         {
-                            var json_serializer = new JavaScriptSerializer();
-                            RootObject r = json_serializer.Deserialize<RootObject>(json);
-
-                            Console.WriteLine("Sent Succesful!");
+                            txtActivity.Text += file + " Sent Succesful! \r\n\n";
                         }
                     }
                 }
@@ -262,29 +290,14 @@ namespace EasyfisIntegrator
             catch (WebException we)
             {
                 var resp = new StreamReader(we.Response.GetResponseStream()).ReadToEnd();
-
-                String jsonDownloadPath = txtJSONDownloadPath.Text;
-                List<String> files = new List<String>(Directory.EnumerateFiles(jsonDownloadPath));
-                if (files.Any())
-                {
-                    var file = files.FirstOrDefault();
-
-                    String json;
-                    using (StreamReader r = new StreamReader(file))
-                    {
-                        json = r.ReadToEnd();
-                    }
-
-                    Console.WriteLine(resp.Replace("\"", ""));
-                    Console.WriteLine();
-                }
+                txtActivity.Text += resp.Replace("\"", "") + "\r\n\n";
             }
         }
     }
 
-    // ============
-    // Models (CON)
-    // ============
+    // ==========
+    // Model: CON
+    // ==========
     public class CON
     {
         public string DPI { get; set; }
@@ -292,7 +305,7 @@ namespace EasyfisIntegrator
     }
 
     // ===========
-    // Models Root
+    // Model: Root
     // ===========
     public class RootObject
     {
@@ -300,9 +313,9 @@ namespace EasyfisIntegrator
         public List<TRN> TRN { get; set; }
     }
 
-    // ============
-    // Models (TRN)
-    // ============
+    // ==========
+    // Model: TRN
+    // ==========
     public class TRN
     {
         public int FTN { get; set; }
@@ -313,10 +326,13 @@ namespace EasyfisIntegrator
         public string DDT { get; set; }
         public string TDT { get; set; }
         public int TCI { get; set; }
-        public int SAR { get; set; }
         public string TCC { get; set; }
+        public string MEM { get; set; }
+        public int SAR { get; set; }
         public string SAI { get; set; }
+        public string SAM { get; set; }
         public string ACI { get; set; }
+        public string ACC { get; set; }
         public string RNO { get; set; }
         public string ACS { get; set; }
         public string CUR { get; set; }
@@ -343,16 +359,16 @@ namespace EasyfisIntegrator
         public List<JEN> JEN { get; set; }
     }
 
-    // ============
-    // Models (JEN)
-    // ============
+    // ==========
+    // Model: JEN
+    // ==========
     public class JEN
     {
         public int FTN { get; set; }
         public int SAR { get; set; }
         public string FID { get; set; }
         public string SUF { get; set; }
-        public string ACC { get; set; }
+        public string ACI { get; set; }
         public string ACS { get; set; }
         public string SAC { get; set; }
         public string ADC { get; set; }
