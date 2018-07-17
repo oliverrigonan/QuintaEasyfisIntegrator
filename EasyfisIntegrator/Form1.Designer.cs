@@ -41,6 +41,8 @@
             this.tabIntegrator = new System.Windows.Forms.TabControl();
             this.tabActivity = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.txtAPIURLHostEasyfis = new System.Windows.Forms.TextBox();
+            this.lblAPIUrlHostEasyfis = new System.Windows.Forms.Label();
             this.txtAPIURLHostSource = new System.Windows.Forms.TextBox();
             this.lblAPIUrlHostSource = new System.Windows.Forms.Label();
             this.txtJSONArchivePath = new System.Windows.Forms.TextBox();
@@ -58,8 +60,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.txtAPIURLHostEasyfis = new System.Windows.Forms.TextBox();
-            this.lblAPIUrlHostEasyfis = new System.Windows.Forms.Label();
+            this.cboTaxType = new System.Windows.Forms.ComboBox();
+            this.lblDefaultVatOutput = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabIntegrator.SuspendLayout();
@@ -185,6 +187,8 @@
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.lblDefaultVatOutput);
+            this.tabSettings.Controls.Add(this.cboTaxType);
             this.tabSettings.Controls.Add(this.txtAPIURLHostEasyfis);
             this.tabSettings.Controls.Add(this.lblAPIUrlHostEasyfis);
             this.tabSettings.Controls.Add(this.txtAPIURLHostSource);
@@ -200,6 +204,22 @@
             this.tabSettings.TabIndex = 1;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // txtAPIURLHostEasyfis
+            // 
+            this.txtAPIURLHostEasyfis.Location = new System.Drawing.Point(6, 84);
+            this.txtAPIURLHostEasyfis.Name = "txtAPIURLHostEasyfis";
+            this.txtAPIURLHostEasyfis.Size = new System.Drawing.Size(537, 22);
+            this.txtAPIURLHostEasyfis.TabIndex = 22;
+            // 
+            // lblAPIUrlHostEasyfis
+            // 
+            this.lblAPIUrlHostEasyfis.AutoSize = true;
+            this.lblAPIUrlHostEasyfis.Location = new System.Drawing.Point(6, 64);
+            this.lblAPIUrlHostEasyfis.Name = "lblAPIUrlHostEasyfis";
+            this.lblAPIUrlHostEasyfis.Size = new System.Drawing.Size(157, 17);
+            this.lblAPIUrlHostEasyfis.TabIndex = 21;
+            this.lblAPIUrlHostEasyfis.Text = "API URL Host (Easyfis):";
             // 
             // txtAPIURLHostSource
             // 
@@ -360,21 +380,22 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Easy Financial Information System Integrator";
             // 
-            // txtAPIURLHostEasyfis
+            // cboTaxType
             // 
-            this.txtAPIURLHostEasyfis.Location = new System.Drawing.Point(6, 84);
-            this.txtAPIURLHostEasyfis.Name = "txtAPIURLHostEasyfis";
-            this.txtAPIURLHostEasyfis.Size = new System.Drawing.Size(537, 22);
-            this.txtAPIURLHostEasyfis.TabIndex = 22;
+            this.cboTaxType.FormattingEnabled = true;
+            this.cboTaxType.Location = new System.Drawing.Point(6, 300);
+            this.cboTaxType.Name = "cboTaxType";
+            this.cboTaxType.Size = new System.Drawing.Size(537, 24);
+            this.cboTaxType.TabIndex = 23;
             // 
-            // lblAPIUrlHostEasyfis
+            // lblDefaultVatOutput
             // 
-            this.lblAPIUrlHostEasyfis.AutoSize = true;
-            this.lblAPIUrlHostEasyfis.Location = new System.Drawing.Point(6, 64);
-            this.lblAPIUrlHostEasyfis.Name = "lblAPIUrlHostEasyfis";
-            this.lblAPIUrlHostEasyfis.Size = new System.Drawing.Size(157, 17);
-            this.lblAPIUrlHostEasyfis.TabIndex = 21;
-            this.lblAPIUrlHostEasyfis.Text = "API URL Host (Easyfis):";
+            this.lblDefaultVatOutput.AutoSize = true;
+            this.lblDefaultVatOutput.Location = new System.Drawing.Point(6, 280);
+            this.lblDefaultVatOutput.Name = "lblDefaultVatOutput";
+            this.lblDefaultVatOutput.Size = new System.Drawing.Size(125, 17);
+            this.lblDefaultVatOutput.TabIndex = 24;
+            this.lblDefaultVatOutput.Text = "Default Vat Output";
             // 
             // FormMain
             // 
@@ -437,6 +458,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtAPIURLHostEasyfis;
         private System.Windows.Forms.Label lblAPIUrlHostEasyfis;
+        private System.Windows.Forms.ComboBox cboTaxType;
+        private System.Windows.Forms.Label lblDefaultVatOutput;
     }
 }
 

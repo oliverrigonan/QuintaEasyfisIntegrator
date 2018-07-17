@@ -36,8 +36,8 @@ namespace EasyfisIntegrator
             txtTimeTrigger.Text = "02:00:00 AM";
             txtAPIURLHostSource.Text = "http://api.kloudhotels.com:8081";
             txtAPIURLHostEasyfis.Text = "http://localhost:2651";
-            txtJSONDownloadPath.Text = "D:\\Innosoft\\fileWatcherPath";
-            txtJSONArchivePath.Text = "D:\\Innosoft\\fileWatcherPath\\archive";
+            txtJSONDownloadPath.Text = "D:\\Innosoft\\quinta\\json";
+            txtJSONArchivePath.Text = "D:\\Innosoft\\quinta\\archive";
 
             timer.Interval = 1000;
             timer.Tick += new EventHandler(TimerTick);
@@ -56,6 +56,7 @@ namespace EasyfisIntegrator
             fileWatcher.Renamed += new RenamedEventHandler(FileWatcherOnRenamed);
 
             fileWatcher.EnableRaisingEvents = true;
+            GetTaxType();
         }
 
         // =========================================================
@@ -82,8 +83,57 @@ namespace EasyfisIntegrator
             txtTime.Text = DateTime.Now.ToString("hh:mm:ss tt", CultureInfo.InvariantCulture);
             if (txtTime.Text.Equals(txtTimeTrigger.Text))
             {
-                timer.Enabled = false;
                 SyncSalesData();
+            }
+        }
+
+        // =============
+        // Get Tax Types
+        // =============
+        public void GetTaxType()
+        {
+            String apiUrlHost = txtAPIURLHostEasyfis.Text;
+
+            // ====================
+            // Process Http Request
+            // ====================
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(apiUrlHost + "/api/quinta/sales/integration/list/taxType");
+            httpWebRequest.ContentType = "application/json";
+            httpWebRequest.Method = "GET";
+
+            // =====================
+            // Process Http Response
+            // =====================
+            HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                var result = streamReader.ReadToEnd();
+
+                JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+                List<MstTaxType> mstTaxTypes = (List<MstTaxType>)javaScriptSerializer.Deserialize(result, typeof(List<MstTaxType>));
+
+                List<MstTaxType> newListTaxType = new List<MstTaxType>();
+
+                var isFirstIndexSelected = false;
+
+                foreach (var taxType in mstTaxTypes)
+                {
+                    cboTaxType.Items.Add(taxType.TaxType);
+
+                    if (!isFirstIndexSelected)
+                    {
+                        cboTaxType.SelectedItem = taxType.TaxType;
+                        isFirstIndexSelected = true;
+                    }
+
+                    //MstTaxType newTaxType = new MstTaxType()
+                    //{
+                    //    Id = taxType.Id,
+                    //    TaxType = taxType.TaxType
+                    //};
+
+                    //newListTaxType.Add(newTaxType);
+                }
             }
         }
 
@@ -98,7 +148,7 @@ namespace EasyfisIntegrator
                 // URL Filters
                 // ===========
                 DateTime dateTimeNow = DateTime.Now;
-                String yesterdayDate = dateTimeNow.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                String yesterdayDate = dateTimeNow.AddDays(-20).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
                 String todayDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                 // ====================
@@ -191,7 +241,7 @@ namespace EasyfisIntegrator
                             WHT = TRN.WHT,
                             MRK = TRN.MRK,
                             SRC = TRN.SRC,
-                            JEN = TRN.JEN
+                            JEN = newListJEN
                         };
 
                         newListTRN.Add(newTRN);
@@ -218,6 +268,7 @@ namespace EasyfisIntegrator
                     File.WriteAllText(jsonFileName, json);
 
                     txtActivity.Text += fileName + " JSON File Successfuly Created! \r\n\n";
+
                     SendSalesJsonFiles();
                 }
             }
@@ -251,10 +302,14 @@ namespace EasyfisIntegrator
                         json = streamReader.ReadToEnd();
                     }
 
+                    JavaScriptSerializer js = new JavaScriptSerializer();
+                    RootObject r = js.Deserialize<RootObject>(json);
+                    Console.WriteLine(new JavaScriptSerializer().Serialize(r));
+
                     // ====================
                     // Process Http Request
                     // ====================
-                    HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create("http://" + apiUrlHost + "/api/add/POSIntegration/salesInvoice");
+                    HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(apiUrlHost + "/api/quinta/sales/integration/add");
                     httpWebRequest.ContentType = "application/json";
                     httpWebRequest.Method = "POST";
 
@@ -267,8 +322,6 @@ namespace EasyfisIntegrator
                         RootObject rootObject = javaScriptSerializer.Deserialize<RootObject>(json);
 
                         streamWriter.Write(new JavaScriptSerializer().Serialize(rootObject));
-
-                        txtActivity.Text += "Sending \r\n\n";
                     }
 
                     // =====================
@@ -280,12 +333,10 @@ namespace EasyfisIntegrator
                         var result = streamReader.ReadToEnd();
                         if (result != null)
                         {
-                            txtActivity.Text += file + " Sent Succesful! \r\n\n";
+                            txtActivity.Text += Path.GetFileName(file) + " Sent Succesful! \r\n\n";
                         }
                     }
                 }
-
-                timer.Enabled = true;
             }
             catch (WebException we)
             {
@@ -293,6 +344,15 @@ namespace EasyfisIntegrator
                 txtActivity.Text += resp.Replace("\"", "") + "\r\n\n";
             }
         }
+    }
+
+    // ===============
+    // Model: Tax Type
+    // ===============
+    public class MstTaxType
+    {
+        public string Id { get; set; }
+        public string TaxType { get; set; }
     }
 
     // ==========
