@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
@@ -21,6 +16,7 @@ namespace EasyfisIntegrator
         // ================
         private static FileSystemWatcher fileWatcher = new FileSystemWatcher();
         private static Timer timer = new Timer();
+        private static Boolean isStart = false;
 
         // =========
         // Main Form
@@ -38,10 +34,15 @@ namespace EasyfisIntegrator
             txtAPIURLHostEasyfis.Text = "http://localhost:2651";
             txtJSONDownloadPath.Text = "D:\\Innosoft\\quinta\\json";
             txtJSONArchivePath.Text = "D:\\Innosoft\\quinta\\archive";
+            txtJSONReturnPath.Text = "D:\\Innosoft\\quinta\\return";
 
             timer.Interval = 1000;
             timer.Tick += new EventHandler(TimerTick);
             timer.Enabled = true;
+
+            CreateComboBoxTerm();
+            CreateComboBoxTaxType();
+            CreateComboBoxDiscount();
 
             // ============
             // File Watcher
@@ -56,7 +57,23 @@ namespace EasyfisIntegrator
             fileWatcher.Renamed += new RenamedEventHandler(FileWatcherOnRenamed);
 
             fileWatcher.EnableRaisingEvents = true;
-            GetTaxType();
+
+            isStart = true;
+
+            btnStart.Enabled = false;
+            btnStop.Enabled = true;
+
+            txtTimeTrigger.Enabled = false;
+            txtAPIURLHostSource.Enabled = false;
+            txtAPIURLHostEasyfis.Enabled = false;
+            txtJSONDownloadPath.Enabled = false;
+            txtJSONArchivePath.Enabled = false;
+            txtJSONReturnPath.Enabled = false;
+            cboTerm.Enabled = false;
+            cboVatInput.Enabled = false;
+            cboVatOutput.Enabled = false;
+            cboWTax.Enabled = false;
+            cboDiscount.Enabled = false;
         }
 
         // =========================================================
@@ -81,59 +98,167 @@ namespace EasyfisIntegrator
         public void TimerTick(object sender, EventArgs e)
         {
             txtTime.Text = DateTime.Now.ToString("hh:mm:ss tt", CultureInfo.InvariantCulture);
-            if (txtTime.Text.Equals(txtTimeTrigger.Text))
+
+            if (isStart)
             {
-                SyncSalesData();
+                if (txtTime.Text.Equals(txtTimeTrigger.Text))
+                {
+                    SyncSalesData();
+                }
             }
         }
 
-        // =============
-        // Get Tax Types
-        // =============
-        public void GetTaxType()
+        // =====================
+        // Create Combo Box Term
+        // =====================
+        public void CreateComboBoxTerm()
         {
-            String apiUrlHost = txtAPIURLHostEasyfis.Text;
-
-            // ====================
-            // Process Http Request
-            // ====================
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(apiUrlHost + "/api/quinta/sales/integration/list/taxType");
-            httpWebRequest.ContentType = "application/json";
-            httpWebRequest.Method = "GET";
-
-            // =====================
-            // Process Http Response
-            // =====================
-            HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            try
             {
-                var result = streamReader.ReadToEnd();
+                String apiUrlHost = txtAPIURLHostEasyfis.Text;
 
-                JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
-                List<MstTaxType> mstTaxTypes = (List<MstTaxType>)javaScriptSerializer.Deserialize(result, typeof(List<MstTaxType>));
+                // ====================
+                // Process Http Request
+                // ====================
+                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(apiUrlHost + "/api/quinta/integration/salesInvoice/dropdown/term/list");
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "GET";
 
-                List<MstTaxType> newListTaxType = new List<MstTaxType>();
-
-                var isFirstIndexSelected = false;
-
-                foreach (var taxType in mstTaxTypes)
+                // =====================
+                // Process Http Response
+                // =====================
+                HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream()))
                 {
-                    cboTaxType.Items.Add(taxType.TaxType);
+                    var result = streamReader.ReadToEnd();
 
-                    if (!isFirstIndexSelected)
+                    JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+                    List<MstTerm> mstTerms = (List<MstTerm>)javaScriptSerializer.Deserialize(result, typeof(List<MstTerm>));
+
+                    List<MstTerm> newListTerm = new List<MstTerm>();
+
+                    var isFirstIndexSelected = false;
+
+                    foreach (var term in mstTerms)
                     {
-                        cboTaxType.SelectedItem = taxType.TaxType;
-                        isFirstIndexSelected = true;
+                        cboTerm.Items.Add(term.Term);
+
+                        if (!isFirstIndexSelected)
+                        {
+                            cboTerm.SelectedItem = term.Term;
+                            isFirstIndexSelected = true;
+                        }
                     }
-
-                    //MstTaxType newTaxType = new MstTaxType()
-                    //{
-                    //    Id = taxType.Id,
-                    //    TaxType = taxType.TaxType
-                    //};
-
-                    //newListTaxType.Add(newTaxType);
                 }
+            }
+            catch (WebException we)
+            {
+                var resp = new StreamReader(we.Response.GetResponseStream()).ReadToEnd();
+                txtActivity.Text += resp.Replace("\"", "") + "\r\n\n";
+            }
+        }
+
+        // =========================
+        // Create Combo Box Tax Type
+        // =========================
+        public void CreateComboBoxTaxType()
+        {
+            try
+            {
+                String apiUrlHost = txtAPIURLHostEasyfis.Text;
+
+                // ====================
+                // Process Http Request
+                // ====================
+                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(apiUrlHost + "/api/quinta/integration/salesInvoice/dropdown/taxType/list");
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "GET";
+
+                // =====================
+                // Process Http Response
+                // =====================
+                HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    var result = streamReader.ReadToEnd();
+
+                    JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+                    List<MstTaxType> mstTaxTypes = (List<MstTaxType>)javaScriptSerializer.Deserialize(result, typeof(List<MstTaxType>));
+
+                    List<MstTaxType> newListTaxType = new List<MstTaxType>();
+
+                    var isFirstIndexSelected = false;
+
+                    foreach (var taxType in mstTaxTypes)
+                    {
+                        cboVatOutput.Items.Add(taxType.TaxType);
+                        cboVatInput.Items.Add(taxType.TaxType);
+                        cboWTax.Items.Add(taxType.TaxType);
+
+                        if (!isFirstIndexSelected)
+                        {
+                            cboVatOutput.SelectedItem = taxType.TaxType;
+                            cboVatInput.SelectedItem = taxType.TaxType;
+                            cboWTax.SelectedItem = taxType.TaxType;
+                            isFirstIndexSelected = true;
+                        }
+                    }
+                }
+            }
+            catch (WebException we)
+            {
+                var resp = new StreamReader(we.Response.GetResponseStream()).ReadToEnd();
+                txtActivity.Text += resp.Replace("\"", "") + "\r\n\n";
+            }
+        }
+
+        // =========================
+        // Create Combo Box Discount
+        // =========================
+        public void CreateComboBoxDiscount()
+        {
+            try
+            {
+                String apiUrlHost = txtAPIURLHostEasyfis.Text;
+
+                // ====================
+                // Process Http Request
+                // ====================
+                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(apiUrlHost + "/api/quinta/integration/salesInvoice/dropdown/discount/list");
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "GET";
+
+                // =====================
+                // Process Http Response
+                // =====================
+                HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    var result = streamReader.ReadToEnd();
+
+                    JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+                    List<MstDiscount> mstDiscounts = (List<MstDiscount>)javaScriptSerializer.Deserialize(result, typeof(List<MstDiscount>));
+
+                    List<MstDiscount> newListDiscount = new List<MstDiscount>();
+
+                    var isFirstIndexSelected = false;
+
+                    foreach (var discount in mstDiscounts)
+                    {
+                        cboDiscount.Items.Add(discount.Discount);
+
+                        if (!isFirstIndexSelected)
+                        {
+                            cboDiscount.SelectedItem = discount.Discount;
+                            isFirstIndexSelected = true;
+                        }
+                    }
+                }
+            }
+            catch (WebException we)
+            {
+                var resp = new StreamReader(we.Response.GetResponseStream()).ReadToEnd();
+                txtActivity.Text += resp.Replace("\"", "") + "\r\n\n";
             }
         }
 
@@ -253,10 +378,21 @@ namespace EasyfisIntegrator
                         DCI = rootObject.CON.DCI,
                     };
 
+                    String defaultTerm = cboTerm.Text;
+                    String defaultVatOutput = cboVatOutput.Text;
+                    String defaultVatInput = cboVatInput.Text;
+                    String defaultWTax = cboWTax.Text;
+                    String defaultDiscount = cboDiscount.Text;
+
                     RootObject rootObjectData = new RootObject()
                     {
                         CON = newCON,
-                        TRN = newListTRN
+                        TRN = newListTRN,
+                        DefaultTerm = defaultTerm,
+                        DefaultVatOutput = defaultVatOutput,
+                        DefaultVatInput = defaultVatInput,
+                        DefaultWTax = defaultWTax,
+                        DefaultDiscount = defaultDiscount,
                     };
 
                     String jsonDownloadPath = txtJSONDownloadPath.Text;
@@ -309,7 +445,7 @@ namespace EasyfisIntegrator
                     // ====================
                     // Process Http Request
                     // ====================
-                    HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(apiUrlHost + "/api/quinta/sales/integration/add");
+                    HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(apiUrlHost + "/api/quinta/integration/salesInvoice/add");
                     httpWebRequest.ContentType = "application/json";
                     httpWebRequest.Method = "POST";
 
@@ -333,6 +469,16 @@ namespace EasyfisIntegrator
                         var result = streamReader.ReadToEnd();
                         if (result != null)
                         {
+                            DateTime dateTimeNow = DateTime.Now;
+                            String todayDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+                            String jsonReturnPath = txtJSONReturnPath.Text;
+                            String fileName = "Return (" + todayDate + ")";
+
+                            String jsonFileName = jsonReturnPath + "\\" + fileName + ".json";
+
+                            File.WriteAllText(jsonFileName, new JavaScriptSerializer().Serialize(result));
+
                             txtActivity.Text += Path.GetFileName(file) + " Sent Succesful! \r\n\n";
                         }
                     }
@@ -344,6 +490,61 @@ namespace EasyfisIntegrator
                 txtActivity.Text += resp.Replace("\"", "") + "\r\n\n";
             }
         }
+
+        // ============
+        // Button Start
+        // ============
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            isStart = true;
+
+            btnStart.Enabled = false;
+            btnStop.Enabled = true;
+
+            txtTimeTrigger.Enabled = false;
+            txtAPIURLHostSource.Enabled = false;
+            txtAPIURLHostEasyfis.Enabled = false;
+            txtJSONDownloadPath.Enabled = false;
+            txtJSONArchivePath.Enabled = false;
+            txtJSONReturnPath.Enabled = false;
+            cboTerm.Enabled = false;
+            cboVatInput.Enabled = false;
+            cboVatOutput.Enabled = false;
+            cboWTax.Enabled = false;
+            cboDiscount.Enabled = false;
+        }
+
+        // ===========
+        // Button Stop
+        // ===========
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            isStart = false;
+
+            btnStart.Enabled = true;
+            btnStop.Enabled = false;
+
+            txtTimeTrigger.Enabled = true;
+            txtAPIURLHostSource.Enabled = true;
+            txtAPIURLHostEasyfis.Enabled = true;
+            txtJSONDownloadPath.Enabled = true;
+            txtJSONArchivePath.Enabled = true;
+            txtJSONReturnPath.Enabled = true;
+            cboTerm.Enabled = true;
+            cboVatInput.Enabled = true;
+            cboVatOutput.Enabled = true;
+            cboWTax.Enabled = true;
+            cboDiscount.Enabled = true;
+        }
+    }
+
+    // ===========
+    // Model: Term
+    // ===========
+    public class MstTerm
+    {
+        public string Id { get; set; }
+        public string Term { get; set; }
     }
 
     // ===============
@@ -353,6 +554,15 @@ namespace EasyfisIntegrator
     {
         public string Id { get; set; }
         public string TaxType { get; set; }
+    }
+
+    // ===============
+    // Model: Discount
+    // ===============
+    public class MstDiscount
+    {
+        public string Id { get; set; }
+        public string Discount { get; set; }
     }
 
     // ==========
@@ -371,6 +581,11 @@ namespace EasyfisIntegrator
     {
         public CON CON { get; set; }
         public List<TRN> TRN { get; set; }
+        public String DefaultTerm { get; set; }
+        public String DefaultVatOutput { get; set; }
+        public String DefaultVatInput { get; set; }
+        public String DefaultWTax { get; set; }
+        public String DefaultDiscount { get; set; }
     }
 
     // ==========
