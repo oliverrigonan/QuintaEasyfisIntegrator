@@ -273,7 +273,7 @@ namespace EasyfisIntegrator
                 // URL Filters
                 // ===========
                 DateTime dateTimeNow = DateTime.Now;
-                String yesterdayDate = dateTimeNow.AddDays(-20).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                String yesterdayDate = dateTimeNow.AddDays(-30).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
                 String todayDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                 // ====================
@@ -432,6 +432,8 @@ namespace EasyfisIntegrator
                 {
                     var file = files.FirstOrDefault();
 
+                    Console.WriteLine(file);
+
                     String json;
                     using (StreamReader streamReader = new StreamReader(file))
                     {
@@ -469,6 +471,8 @@ namespace EasyfisIntegrator
                         var result = streamReader.ReadToEnd();
                         if (result != null)
                         {
+                            Console.WriteLine(result);
+
                             DateTime dateTimeNow = DateTime.Now;
                             String todayDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
@@ -477,9 +481,11 @@ namespace EasyfisIntegrator
 
                             String jsonFileName = jsonReturnPath + "\\" + fileName + ".json";
 
-                            File.WriteAllText(jsonFileName, new JavaScriptSerializer().Serialize(result));
+                            File.WriteAllText(jsonFileName, result);
 
                             txtActivity.Text += Path.GetFileName(file) + " Sent Succesful! \r\n\n";
+
+                            File.Move(file, txtJSONArchivePath.Text + "\\" + Path.GetFileName(file));
                         }
                     }
                 }
