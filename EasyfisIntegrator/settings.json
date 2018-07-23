@@ -1,0 +1,13 @@
+﻿{
+  "DefaultTimeTrigger": "02:00:00 AM",
+  "DefaultAPIUrlHostSource": "http://api.kloudhotels.com:8081",
+  "DefaultAPIUrlHostEasyfis": "http://localhost:2651",
+  "JSONDownloadPath": "D:\\Innosoft\\quinta\\json",
+  "JSONArchivePath": "D:\\Innosoft\\quinta\\archive",
+  "JSONReturnPath": "D:\\Innosoft\\quinta\\return",
+  "DefaultVatOutput": "VAT OUTPUT",
+  "DefaultVatInput": "VAT (Input)",
+  "DefaultWTax": "WITHOLDING TAX ZERO RATE",
+  "DefaultDiscount": "Zero Discount",
+  "DefaultTerm": "COD"
+}

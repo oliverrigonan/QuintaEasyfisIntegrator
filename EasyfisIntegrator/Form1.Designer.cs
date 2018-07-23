@@ -41,6 +41,8 @@
             this.tabIntegrator = new System.Windows.Forms.TabControl();
             this.tabActivity = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.txtJSONReturnPath = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.cboTerm = new System.Windows.Forms.ComboBox();
             this.label13 = new System.Windows.Forms.Label();
@@ -65,8 +67,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btnStop = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
-            this.txtJSONReturnPath = new System.Windows.Forms.TextBox();
-            this.label15 = new System.Windows.Forms.Label();
+            this.btnSaveSettings = new System.Windows.Forms.Button();
+            this.btnEditSettings = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabIntegrator.SuspendLayout();
@@ -147,7 +149,7 @@
             this.txtActivity.Location = new System.Drawing.Point(6, 88);
             this.txtActivity.Multiline = true;
             this.txtActivity.Name = "txtActivity";
-            this.txtActivity.Size = new System.Drawing.Size(537, 311);
+            this.txtActivity.Size = new System.Drawing.Size(537, 314);
             this.txtActivity.TabIndex = 6;
             // 
             // lblActivity
@@ -170,12 +172,14 @@
             this.tabIntegrator.Name = "tabIntegrator";
             this.tabIntegrator.Padding = new System.Drawing.Point(3, 3);
             this.tabIntegrator.SelectedIndex = 0;
-            this.tabIntegrator.Size = new System.Drawing.Size(568, 442);
+            this.tabIntegrator.Size = new System.Drawing.Size(568, 499);
             this.tabIntegrator.TabIndex = 15;
             // 
             // tabActivity
             // 
+            this.tabActivity.Controls.Add(this.btnStart);
             this.tabActivity.Controls.Add(this.txtTimeTrigger);
+            this.tabActivity.Controls.Add(this.btnStop);
             this.tabActivity.Controls.Add(this.lblTime);
             this.tabActivity.Controls.Add(this.txtTime);
             this.tabActivity.Controls.Add(this.lblTimeTrigger);
@@ -184,13 +188,15 @@
             this.tabActivity.Location = new System.Drawing.Point(4, 25);
             this.tabActivity.Name = "tabActivity";
             this.tabActivity.Padding = new System.Windows.Forms.Padding(3);
-            this.tabActivity.Size = new System.Drawing.Size(560, 413);
+            this.tabActivity.Size = new System.Drawing.Size(560, 470);
             this.tabActivity.TabIndex = 0;
             this.tabActivity.Text = "Activity";
             this.tabActivity.UseVisualStyleBackColor = true;
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.btnEditSettings);
+            this.tabSettings.Controls.Add(this.btnSaveSettings);
             this.tabSettings.Controls.Add(this.txtJSONReturnPath);
             this.tabSettings.Controls.Add(this.label15);
             this.tabSettings.Controls.Add(this.label14);
@@ -214,10 +220,26 @@
             this.tabSettings.Location = new System.Drawing.Point(4, 25);
             this.tabSettings.Name = "tabSettings";
             this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSettings.Size = new System.Drawing.Size(560, 413);
+            this.tabSettings.Size = new System.Drawing.Size(560, 470);
             this.tabSettings.TabIndex = 1;
             this.tabSettings.Text = "Settings and Defaults";
             this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // txtJSONReturnPath
+            // 
+            this.txtJSONReturnPath.Location = new System.Drawing.Point(6, 195);
+            this.txtJSONReturnPath.Name = "txtJSONReturnPath";
+            this.txtJSONReturnPath.Size = new System.Drawing.Size(537, 22);
+            this.txtJSONReturnPath.TabIndex = 34;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(3, 175);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(125, 17);
+            this.label15.TabIndex = 33;
+            this.label15.Text = "JSON Return Path";
             // 
             // label14
             // 
@@ -376,7 +398,7 @@
             this.tabAbout.Location = new System.Drawing.Point(4, 25);
             this.tabAbout.Name = "tabAbout";
             this.tabAbout.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAbout.Size = new System.Drawing.Size(560, 413);
+            this.tabAbout.Size = new System.Drawing.Size(560, 470);
             this.tabAbout.TabIndex = 2;
             this.tabAbout.Text = "About";
             this.tabAbout.UseVisualStyleBackColor = true;
@@ -411,7 +433,7 @@
             // 
             // btnStop
             // 
-            this.btnStop.Location = new System.Drawing.Point(469, 527);
+            this.btnStop.Location = new System.Drawing.Point(468, 419);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(75, 34);
             this.btnStop.TabIndex = 16;
@@ -421,7 +443,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(388, 527);
+            this.btnStart.Location = new System.Drawing.Point(387, 419);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(75, 34);
             this.btnStart.TabIndex = 17;
@@ -429,21 +451,25 @@
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
-            // txtJSONReturnPath
+            // btnSaveSettings
             // 
-            this.txtJSONReturnPath.Location = new System.Drawing.Point(6, 195);
-            this.txtJSONReturnPath.Name = "txtJSONReturnPath";
-            this.txtJSONReturnPath.Size = new System.Drawing.Size(537, 22);
-            this.txtJSONReturnPath.TabIndex = 34;
+            this.btnSaveSettings.Location = new System.Drawing.Point(387, 419);
+            this.btnSaveSettings.Name = "btnSaveSettings";
+            this.btnSaveSettings.Size = new System.Drawing.Size(75, 34);
+            this.btnSaveSettings.TabIndex = 35;
+            this.btnSaveSettings.Text = "Save";
+            this.btnSaveSettings.UseVisualStyleBackColor = true;
+            this.btnSaveSettings.Click += new System.EventHandler(this.btnSaveSettings_Click);
             // 
-            // label15
+            // btnEditSettings
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(3, 175);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(125, 17);
-            this.label15.TabIndex = 33;
-            this.label15.Text = "JSON Return Path";
+            this.btnEditSettings.Location = new System.Drawing.Point(468, 419);
+            this.btnEditSettings.Name = "btnEditSettings";
+            this.btnEditSettings.Size = new System.Drawing.Size(75, 34);
+            this.btnEditSettings.TabIndex = 36;
+            this.btnEditSettings.Text = "Edit";
+            this.btnEditSettings.UseVisualStyleBackColor = true;
+            this.btnEditSettings.Click += new System.EventHandler(this.btnEditSettings_Click);
             // 
             // FormMain
             // 
@@ -451,8 +477,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(556, 567);
-            this.Controls.Add(this.btnStart);
-            this.Controls.Add(this.btnStop);
             this.Controls.Add(this.tabIntegrator);
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -515,6 +539,8 @@
         private System.Windows.Forms.ComboBox cboTerm;
         private System.Windows.Forms.TextBox txtJSONReturnPath;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button btnSaveSettings;
+        private System.Windows.Forms.Button btnEditSettings;
     }
 }
 

@@ -28,13 +28,24 @@ namespace EasyfisIntegrator
             // ===============
             InitializeComponent();
 
+            String settingsPath = Application.StartupPath + @"\settings.json";
+
+            String json;
+            using (StreamReader streamReader = new StreamReader(settingsPath))
+            {
+                json = streamReader.ReadToEnd();
+            }
+
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            Settings s = js.Deserialize<Settings>(json);
+
             txtTime.Text = "00:00:00 AM";
-            txtTimeTrigger.Text = "02:00:00 AM";
-            txtAPIURLHostSource.Text = "http://api.kloudhotels.com:8081";
-            txtAPIURLHostEasyfis.Text = "http://localhost:2651";
-            txtJSONDownloadPath.Text = "D:\\Innosoft\\quinta\\json";
-            txtJSONArchivePath.Text = "D:\\Innosoft\\quinta\\archive";
-            txtJSONReturnPath.Text = "D:\\Innosoft\\quinta\\return";
+            txtTimeTrigger.Text = s.DefaultTimeTrigger;
+            txtAPIURLHostSource.Text = s.DefaultAPIUrlHostSource;
+            txtAPIURLHostEasyfis.Text = s.DefaultAPIUrlHostEasyfis;
+            txtJSONDownloadPath.Text = s.JSONDownloadPath;
+            txtJSONArchivePath.Text = s.JSONArchivePath;
+            txtJSONReturnPath.Text = s.JSONReturnPath;
 
             timer.Interval = 1000;
             timer.Tick += new EventHandler(TimerTick);
@@ -74,6 +85,8 @@ namespace EasyfisIntegrator
             cboVatOutput.Enabled = false;
             cboWTax.Enabled = false;
             cboDiscount.Enabled = false;
+            btnSaveSettings.Enabled = false;
+            btnEditSettings.Enabled = true;
         }
 
         // =========================================================
@@ -149,12 +162,24 @@ namespace EasyfisIntegrator
                             isFirstIndexSelected = true;
                         }
                     }
+
+                    String settingsPath = Application.StartupPath + @"\settings.json";
+
+                    String settingsJson;
+                    using (StreamReader settingsStreamReader = new StreamReader(settingsPath))
+                    {
+                        settingsJson = settingsStreamReader.ReadToEnd();
+                    }
+
+                    JavaScriptSerializer js = new JavaScriptSerializer();
+                    Settings s = js.Deserialize<Settings>(settingsJson);
+
+                    cboTerm.SelectedItem = s.DefaultTerm;
                 }
             }
-            catch (WebException we)
+            catch (Exception e)
             {
-                var resp = new StreamReader(we.Response.GetResponseStream()).ReadToEnd();
-                txtActivity.Text += resp.Replace("\"", "") + "\r\n\n";
+                txtActivity.Text += e.Message + "\r\n\n";
             }
         }
 
@@ -203,12 +228,26 @@ namespace EasyfisIntegrator
                             isFirstIndexSelected = true;
                         }
                     }
+
+                    String settingsPath = Application.StartupPath + @"\settings.json";
+
+                    String settingsJson;
+                    using (StreamReader settingsStreamReader = new StreamReader(settingsPath))
+                    {
+                        settingsJson = settingsStreamReader.ReadToEnd();
+                    }
+
+                    JavaScriptSerializer js = new JavaScriptSerializer();
+                    Settings s = js.Deserialize<Settings>(settingsJson);
+
+                    cboVatOutput.SelectedItem = s.DefaultVatOutput;
+                    cboVatInput.SelectedItem = s.DefaultVatInput;
+                    cboWTax.SelectedItem = s.DefaultWTax;
                 }
             }
-            catch (WebException we)
+            catch (Exception e)
             {
-                var resp = new StreamReader(we.Response.GetResponseStream()).ReadToEnd();
-                txtActivity.Text += resp.Replace("\"", "") + "\r\n\n";
+                txtActivity.Text += e.Message + "\r\n\n";
             }
         }
 
@@ -253,12 +292,24 @@ namespace EasyfisIntegrator
                             isFirstIndexSelected = true;
                         }
                     }
+
+                    String settingsPath = Application.StartupPath + @"\settings.json";
+
+                    String settingsJson;
+                    using (StreamReader settingsStreamReader = new StreamReader(settingsPath))
+                    {
+                        settingsJson = settingsStreamReader.ReadToEnd();
+                    }
+
+                    JavaScriptSerializer js = new JavaScriptSerializer();
+                    Settings s = js.Deserialize<Settings>(settingsJson);
+
+                    cboDiscount.SelectedItem = s.DefaultDiscount;
                 }
             }
-            catch (WebException we)
+            catch (Exception e)
             {
-                var resp = new StreamReader(we.Response.GetResponseStream()).ReadToEnd();
-                txtActivity.Text += resp.Replace("\"", "") + "\r\n\n";
+                txtActivity.Text += e.Message + "\r\n\n";
             }
         }
 
@@ -490,10 +541,9 @@ namespace EasyfisIntegrator
                     }
                 }
             }
-            catch (WebException we)
+            catch (Exception e)
             {
-                var resp = new StreamReader(we.Response.GetResponseStream()).ReadToEnd();
-                txtActivity.Text += resp.Replace("\"", "") + "\r\n\n";
+                txtActivity.Text += e.Message + "\r\n\n";
             }
         }
 
@@ -518,6 +568,8 @@ namespace EasyfisIntegrator
             cboVatOutput.Enabled = false;
             cboWTax.Enabled = false;
             cboDiscount.Enabled = false;
+            btnSaveSettings.Enabled = false;
+            btnEditSettings.Enabled = true;
         }
 
         // ===========
@@ -531,6 +583,57 @@ namespace EasyfisIntegrator
             btnStop.Enabled = false;
 
             txtTimeTrigger.Enabled = true;
+        }
+
+        // =============
+        // Save Settings
+        // =============
+        private void btnSaveSettings_Click(object sender, EventArgs e)
+        {
+            btnStart.Enabled = true;
+
+            txtAPIURLHostSource.Enabled = false;
+            txtAPIURLHostEasyfis.Enabled = false;
+            txtJSONDownloadPath.Enabled = false;
+            txtJSONArchivePath.Enabled = false;
+            txtJSONReturnPath.Enabled = false;
+            cboTerm.Enabled = false;
+            cboVatInput.Enabled = false;
+            cboVatOutput.Enabled = false;
+            cboWTax.Enabled = false;
+            cboDiscount.Enabled = false;
+            btnSaveSettings.Enabled = false;
+            btnEditSettings.Enabled = true;
+
+            Settings settingsData = new Settings()
+            {
+                DefaultTimeTrigger = txtTimeTrigger.Text,
+                DefaultAPIUrlHostSource = txtAPIURLHostSource.Text,
+                DefaultAPIUrlHostEasyfis = txtAPIURLHostEasyfis.Text,
+                JSONDownloadPath = txtJSONDownloadPath.Text,
+                JSONArchivePath = txtJSONArchivePath.Text,
+                JSONReturnPath = txtJSONReturnPath.Text,
+                DefaultVatOutput = cboVatOutput.Text,
+                DefaultVatInput = cboVatInput.Text,
+                DefaultWTax = cboWTax.Text,
+                DefaultDiscount = cboDiscount.Text,
+                DefaultTerm = cboTerm.Text,
+            };
+
+            String json = new JavaScriptSerializer().Serialize(settingsData);
+            String settingsPath = Application.StartupPath + @"\settings.json";
+
+            File.WriteAllText(settingsPath, json);
+        }
+
+        private void btnEditSettings_Click(object sender, EventArgs e)
+        {
+            isStart = false;
+
+            btnStart.Enabled = false;
+            btnStop.Enabled = false;
+
+            txtTimeTrigger.Enabled = true;
             txtAPIURLHostSource.Enabled = true;
             txtAPIURLHostEasyfis.Enabled = true;
             txtJSONDownloadPath.Enabled = true;
@@ -541,6 +644,8 @@ namespace EasyfisIntegrator
             cboVatOutput.Enabled = true;
             cboWTax.Enabled = true;
             cboDiscount.Enabled = true;
+            btnSaveSettings.Enabled = true;
+            btnEditSettings.Enabled = false;
         }
     }
 
@@ -665,5 +770,23 @@ namespace EasyfisIntegrator
         public string VNO { get; set; }
         public string VDT { get; set; }
         public string CHQ { get; set; }
+    }
+
+    // ========
+    // Settings
+    // ========
+    public class Settings
+    {
+        public string DefaultTimeTrigger { get; set; }
+        public string DefaultAPIUrlHostSource { get; set; }
+        public string DefaultAPIUrlHostEasyfis { get; set; }
+        public string JSONDownloadPath { get; set; }
+        public string JSONArchivePath { get; set; }
+        public string JSONReturnPath { get; set; }
+        public string DefaultVatOutput { get; set; }
+        public string DefaultVatInput { get; set; }
+        public string DefaultWTax { get; set; }
+        public string DefaultDiscount { get; set; }
+        public string DefaultTerm { get; set; }
     }
 }
