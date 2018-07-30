@@ -40,7 +40,11 @@
             this.lblActivity = new System.Windows.Forms.Label();
             this.tabIntegrator = new System.Windows.Forms.TabControl();
             this.tabActivity = new System.Windows.Forms.TabPage();
+            this.btnStart = new System.Windows.Forms.Button();
+            this.btnStop = new System.Windows.Forms.Button();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.btnEditSettings = new System.Windows.Forms.Button();
+            this.btnSaveSettings = new System.Windows.Forms.Button();
             this.txtJSONReturnPath = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
@@ -65,10 +69,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnStop = new System.Windows.Forms.Button();
-            this.btnStart = new System.Windows.Forms.Button();
-            this.btnSaveSettings = new System.Windows.Forms.Button();
-            this.btnEditSettings = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabIntegrator.SuspendLayout();
@@ -193,6 +193,26 @@
             this.tabActivity.Text = "Activity";
             this.tabActivity.UseVisualStyleBackColor = true;
             // 
+            // btnStart
+            // 
+            this.btnStart.Location = new System.Drawing.Point(387, 419);
+            this.btnStart.Name = "btnStart";
+            this.btnStart.Size = new System.Drawing.Size(75, 34);
+            this.btnStart.TabIndex = 17;
+            this.btnStart.Text = "Start";
+            this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
+            // 
+            // btnStop
+            // 
+            this.btnStop.Location = new System.Drawing.Point(468, 419);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(75, 34);
+            this.btnStop.TabIndex = 16;
+            this.btnStop.Text = "Stop";
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            // 
             // tabSettings
             // 
             this.tabSettings.Controls.Add(this.btnEditSettings);
@@ -224,6 +244,26 @@
             this.tabSettings.TabIndex = 1;
             this.tabSettings.Text = "Settings and Defaults";
             this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // btnEditSettings
+            // 
+            this.btnEditSettings.Location = new System.Drawing.Point(468, 419);
+            this.btnEditSettings.Name = "btnEditSettings";
+            this.btnEditSettings.Size = new System.Drawing.Size(75, 34);
+            this.btnEditSettings.TabIndex = 36;
+            this.btnEditSettings.Text = "Edit";
+            this.btnEditSettings.UseVisualStyleBackColor = true;
+            this.btnEditSettings.Click += new System.EventHandler(this.btnEditSettings_Click);
+            // 
+            // btnSaveSettings
+            // 
+            this.btnSaveSettings.Location = new System.Drawing.Point(387, 419);
+            this.btnSaveSettings.Name = "btnSaveSettings";
+            this.btnSaveSettings.Size = new System.Drawing.Size(75, 34);
+            this.btnSaveSettings.TabIndex = 35;
+            this.btnSaveSettings.Text = "Save";
+            this.btnSaveSettings.UseVisualStyleBackColor = true;
+            this.btnSaveSettings.Click += new System.EventHandler(this.btnSaveSettings_Click);
             // 
             // txtJSONReturnPath
             // 
@@ -419,7 +459,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(175, 17);
             this.label3.TabIndex = 1;
-            this.label3.Text = "Version: 1.07112018.NOR";
+            this.label3.Text = "Version: 1.07302018.NOR";
             // 
             // label2
             // 
@@ -430,46 +470,6 @@
             this.label2.Size = new System.Drawing.Size(332, 17);
             this.label2.TabIndex = 0;
             this.label2.Text = "Easy Financial Information System Integrator";
-            // 
-            // btnStop
-            // 
-            this.btnStop.Location = new System.Drawing.Point(468, 419);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(75, 34);
-            this.btnStop.TabIndex = 16;
-            this.btnStop.Text = "Stop";
-            this.btnStop.UseVisualStyleBackColor = true;
-            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
-            // 
-            // btnStart
-            // 
-            this.btnStart.Location = new System.Drawing.Point(387, 419);
-            this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(75, 34);
-            this.btnStart.TabIndex = 17;
-            this.btnStart.Text = "Start";
-            this.btnStart.UseVisualStyleBackColor = true;
-            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
-            // 
-            // btnSaveSettings
-            // 
-            this.btnSaveSettings.Location = new System.Drawing.Point(387, 419);
-            this.btnSaveSettings.Name = "btnSaveSettings";
-            this.btnSaveSettings.Size = new System.Drawing.Size(75, 34);
-            this.btnSaveSettings.TabIndex = 35;
-            this.btnSaveSettings.Text = "Save";
-            this.btnSaveSettings.UseVisualStyleBackColor = true;
-            this.btnSaveSettings.Click += new System.EventHandler(this.btnSaveSettings_Click);
-            // 
-            // btnEditSettings
-            // 
-            this.btnEditSettings.Location = new System.Drawing.Point(468, 419);
-            this.btnEditSettings.Name = "btnEditSettings";
-            this.btnEditSettings.Size = new System.Drawing.Size(75, 34);
-            this.btnEditSettings.TabIndex = 36;
-            this.btnEditSettings.Text = "Edit";
-            this.btnEditSettings.UseVisualStyleBackColor = true;
-            this.btnEditSettings.Click += new System.EventHandler(this.btnEditSettings_Click);
             // 
             // FormMain
             // 
