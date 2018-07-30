@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
@@ -28,7 +29,7 @@ namespace EasyfisIntegrator
             // ===============
             InitializeComponent();
 
-            String settingsPath = Application.StartupPath + @"\settings.json";
+            String settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"settings.json");
 
             String json;
             using (StreamReader streamReader = new StreamReader(settingsPath))
@@ -163,7 +164,7 @@ namespace EasyfisIntegrator
                         }
                     }
 
-                    String settingsPath = Application.StartupPath + @"\settings.json";
+                    String settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"settings.json");
 
                     String settingsJson;
                     using (StreamReader settingsStreamReader = new StreamReader(settingsPath))
@@ -229,7 +230,7 @@ namespace EasyfisIntegrator
                         }
                     }
 
-                    String settingsPath = Application.StartupPath + @"\settings.json";
+                    String settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"settings.json");
 
                     String settingsJson;
                     using (StreamReader settingsStreamReader = new StreamReader(settingsPath))
@@ -293,7 +294,7 @@ namespace EasyfisIntegrator
                         }
                     }
 
-                    String settingsPath = Application.StartupPath + @"\settings.json";
+                    String settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"settings.json");
 
                     String settingsJson;
                     using (StreamReader settingsStreamReader = new StreamReader(settingsPath))
@@ -621,7 +622,7 @@ namespace EasyfisIntegrator
             };
 
             String json = new JavaScriptSerializer().Serialize(settingsData);
-            String settingsPath = Application.StartupPath + @"\settings.json";
+            String settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"settings.json");
 
             File.WriteAllText(settingsPath, json);
         }
