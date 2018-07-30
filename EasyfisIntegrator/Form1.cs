@@ -324,7 +324,7 @@ namespace EasyfisIntegrator
                 // URL Filters
                 // ===========
                 DateTime dateTimeNow = DateTime.Now;
-                String yesterdayDate = dateTimeNow.AddDays(-30).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                String yesterdayDate = dateTimeNow.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
                 String todayDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                 // ====================
