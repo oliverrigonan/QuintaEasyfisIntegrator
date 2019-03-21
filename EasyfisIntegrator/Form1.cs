@@ -43,6 +43,8 @@ namespace EasyfisIntegrator
             txtTime.Text = "00:00:00 AM";
             txtTimeTrigger.Text = s.DefaultTimeTrigger;
             txtAPIURLHostSource.Text = s.DefaultAPIUrlHostSource;
+            txtHotelCode.Text = s.DefaultHotelCode;
+            txtToken.Text = s.DefaultToken;
             txtAPIURLHostEasyfis.Text = s.DefaultAPIUrlHostEasyfis;
             txtJSONDownloadPath.Text = s.JSONDownloadPath;
             txtJSONArchivePath.Text = s.JSONArchivePath;
@@ -77,6 +79,8 @@ namespace EasyfisIntegrator
 
             txtTimeTrigger.Enabled = false;
             txtAPIURLHostSource.Enabled = false;
+            txtHotelCode.Enabled = false;
+            txtToken.Enabled = false;
             txtAPIURLHostEasyfis.Enabled = false;
             txtJSONDownloadPath.Enabled = false;
             txtJSONArchivePath.Enabled = false;
@@ -88,6 +92,9 @@ namespace EasyfisIntegrator
             cboDiscount.Enabled = false;
             btnSaveSettings.Enabled = false;
             btnEditSettings.Enabled = true;
+
+            dtpStartDate.Enabled = false;
+            dtpEndDate.Enabled = false;
         }
 
         // =========================================================
@@ -321,17 +328,19 @@ namespace EasyfisIntegrator
         {
             try
             {
+                //String yesterdayDate = dateTimeNow.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                //String todayDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
                 // ===========
                 // URL Filters
                 // ===========
-                DateTime dateTimeNow = DateTime.Now;
-                String yesterdayDate = dateTimeNow.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-                String todayDate = dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                String startDate = dtpStartDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                String endDate = dtpEndDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                 // ====================
                 // Process Http Request
                 // ====================
-                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(txtAPIURLHostSource.Text + "/api/backoffice/transjournal?hcd=QDB&tkn=WOREINSLKJNFQOEASDJKAB&pos=false&frm=" + yesterdayDate + "&tdt=" + todayDate);
+                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(txtAPIURLHostSource.Text + "/api/backoffice/transjournal?hcd=" + txtHotelCode.Text + "&tkn=" + txtToken.Text + "&pos=false&frm=" + startDate + "&tdt=" + endDate);
                 httpWebRequest.Method = "GET";
                 httpWebRequest.Accept = "application/json";
 
@@ -448,7 +457,9 @@ namespace EasyfisIntegrator
                     };
 
                     String jsonDownloadPath = txtJSONDownloadPath.Text;
-                    String fileName = "Transaction (" + todayDate + ")";
+
+                    DateTime dateTimeNow = DateTime.Now;
+                    String fileName = "Transaction (" + dateTimeNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + ")";
 
                     String json = new JavaScriptSerializer().Serialize(rootObjectData);
                     String jsonFileName = jsonDownloadPath + "\\" + fileName + ".json";
@@ -560,6 +571,8 @@ namespace EasyfisIntegrator
 
             txtTimeTrigger.Enabled = false;
             txtAPIURLHostSource.Enabled = false;
+            txtHotelCode.Enabled = false;
+            txtToken.Enabled = false;
             txtAPIURLHostEasyfis.Enabled = false;
             txtJSONDownloadPath.Enabled = false;
             txtJSONArchivePath.Enabled = false;
@@ -571,6 +584,9 @@ namespace EasyfisIntegrator
             cboDiscount.Enabled = false;
             btnSaveSettings.Enabled = false;
             btnEditSettings.Enabled = true;
+
+            dtpStartDate.Enabled = false;
+            dtpEndDate.Enabled = false;
         }
 
         // ===========
@@ -584,6 +600,9 @@ namespace EasyfisIntegrator
             btnStop.Enabled = false;
 
             txtTimeTrigger.Enabled = true;
+
+            dtpStartDate.Enabled = true;
+            dtpEndDate.Enabled = true;
         }
 
         // =============
@@ -594,6 +613,8 @@ namespace EasyfisIntegrator
             btnStart.Enabled = true;
 
             txtAPIURLHostSource.Enabled = false;
+            txtHotelCode.Enabled = false;
+            txtToken.Enabled = false;
             txtAPIURLHostEasyfis.Enabled = false;
             txtJSONDownloadPath.Enabled = false;
             txtJSONArchivePath.Enabled = false;
@@ -610,6 +631,8 @@ namespace EasyfisIntegrator
             {
                 DefaultTimeTrigger = txtTimeTrigger.Text,
                 DefaultAPIUrlHostSource = txtAPIURLHostSource.Text,
+                DefaultHotelCode = txtHotelCode.Text,
+                DefaultToken = txtToken.Text,
                 DefaultAPIUrlHostEasyfis = txtAPIURLHostEasyfis.Text,
                 JSONDownloadPath = txtJSONDownloadPath.Text,
                 JSONArchivePath = txtJSONArchivePath.Text,
@@ -636,6 +659,8 @@ namespace EasyfisIntegrator
 
             txtTimeTrigger.Enabled = true;
             txtAPIURLHostSource.Enabled = true;
+            txtHotelCode.Enabled = true;
+            txtToken.Enabled = true;
             txtAPIURLHostEasyfis.Enabled = true;
             txtJSONDownloadPath.Enabled = true;
             txtJSONArchivePath.Enabled = true;
@@ -645,8 +670,12 @@ namespace EasyfisIntegrator
             cboVatOutput.Enabled = true;
             cboWTax.Enabled = true;
             cboDiscount.Enabled = true;
+
             btnSaveSettings.Enabled = true;
             btnEditSettings.Enabled = false;
+
+            dtpStartDate.Enabled = true;
+            dtpEndDate.Enabled = true;
         }
     }
 
@@ -780,6 +809,8 @@ namespace EasyfisIntegrator
     {
         public string DefaultTimeTrigger { get; set; }
         public string DefaultAPIUrlHostSource { get; set; }
+        public string DefaultHotelCode { get; set; }
+        public string DefaultToken { get; set; }
         public string DefaultAPIUrlHostEasyfis { get; set; }
         public string JSONDownloadPath { get; set; }
         public string JSONArchivePath { get; set; }
